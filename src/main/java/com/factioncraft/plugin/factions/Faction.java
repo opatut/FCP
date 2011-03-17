@@ -1,5 +1,7 @@
 package com.factioncraft.plugin.factions;
 
+import org.bukkit.ChatColor;
+
 import com.factioncraft.plugin.FactionCraftPlugin;
 
 /**
@@ -7,7 +9,7 @@ import com.factioncraft.plugin.FactionCraftPlugin;
  * @author paul
  *
  */
-public class Faction {
+public abstract class Faction {
 	public Faction(FactionCraftPlugin plugin) {
 		mPlugin = plugin;
 	}
@@ -15,6 +17,10 @@ public class Faction {
 	public void OnEnable() {
 		// PluginManager pm = mPlugin.getServer().getPluginManager();
 	}
+	
+	public abstract String GetName();
+	public abstract ChatColor GetChatColor();
+	public abstract String GetPrefix();
 	
 	public FactionCraftPlugin mPlugin;
 }

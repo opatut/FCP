@@ -1,11 +1,6 @@
 package com.factioncraft.plugin.factions;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerListener;
 
 public class MermenPlayerListener extends PlayerListener {
@@ -15,7 +10,7 @@ public class MermenPlayerListener extends PlayerListener {
 	
 	@Override
 	public void onPlayerAnimation(PlayerAnimationEvent event) {
-		if (event.getAnimationType() == PlayerAnimationType.ARM_SWING) {
+		/*if (event.getAnimationType() == PlayerAnimationType.ARM_SWING) {
 			Player p = event.getPlayer();
 			// swinging hand
 			if (p.getItemInHand().getAmount() == 0) {
@@ -34,7 +29,7 @@ public class MermenPlayerListener extends PlayerListener {
 					p.setDisplayName(ChatColor.GREEN + "Swimming " + p.getName());
 				}
 			}
-		}
+		}*/
 		super.onPlayerAnimation(event);
 
 	}
