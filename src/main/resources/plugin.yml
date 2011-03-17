@@ -1,0 +1,28 @@
+name: FactionCraftPlugin
+main: com.factioncraft.plugin.FactionCraftPlugin
+version: 0.0.1
+website: http://www.factioncraft.com
+author: The FactionCraft Team
+description: >
+             Plugin adding faction gameplay (RPG-like) to minecraft. Developed and used by the unique and epic
+             minecraft server community around factioncraft.com.
+commands:
+    factions:
+        description: Shows a list of all available factions to join.
+        usage: /<command>
+    factioninfo:
+        description: Shows information about a specific faction.
+        usage: |
+            /<command> <faction>
+            Example: /<command> org - show information about the orc faction
+    joinfaction:
+        description: Lets you request a faction join. A mod/admin has to accept this request.
+        usage: |
+            /<command> <faction>
+            Example: /<command> orc - you request to join the orc faction
+#  clear:
+#    description: Clears your own or a player's inventory.
+#    usage: |
+#           /<command> [player]
+#           Example: /<command> - clears your own inventory.
+#           Example: /<command> Bukkit - clears Bukkit's inventory.
