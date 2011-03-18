@@ -20,6 +20,12 @@ commands:
         usage: |
             /<command> <faction>
             Example: /<command> orc - you request to join the orc faction
+    quitfaction:
+        description: Admins can reset a player's faction.
+        usage: |
+            /<command> - resets your own faction
+            /<command> [player] - resets the faction of [player]
+
 #  clear:
 #    description: Clears your own or a player's inventory.
 #    usage: |

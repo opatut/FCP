@@ -23,4 +23,5 @@ public class Humans extends Faction {
 	public String GetPrefix() {
 		return "H";
 	}
+
 }

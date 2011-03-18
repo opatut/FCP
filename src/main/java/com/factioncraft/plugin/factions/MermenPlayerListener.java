@@ -3,9 +3,11 @@ package com.factioncraft.plugin.factions;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerListener;
 
+import com.factioncraft.plugin.FactionCraftPlugin;
+
 public class MermenPlayerListener extends PlayerListener {
-	public MermenPlayerListener() {
-		
+	public MermenPlayerListener(FactionCraftPlugin plugin) {
+		mPlugin = plugin;
 	}
 	
 	@Override
@@ -33,4 +35,6 @@ public class MermenPlayerListener extends PlayerListener {
 		super.onPlayerAnimation(event);
 
 	}
+	
+	FactionCraftPlugin mPlugin;
 }

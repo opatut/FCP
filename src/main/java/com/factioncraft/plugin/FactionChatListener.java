@@ -16,32 +16,35 @@ public class FactionChatListener extends PlayerListener {
 	
 	public void onPlayerChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
+        
         // pretend player to be merman
-        boolean is_admin = player.getName().equals("ryanemm10");
-        String faction = "Mermen";
-        if(player.getName().equals("opatut")) {
-        	faction = "Humans";
-        }
-        Faction player_faction = mPlugin.GetFactions().get(faction);
-        String m = player_faction.GetChatColor() + "[" + player_faction.GetPrefix();
-        if(is_admin)
-        	m += "!";
-        else if(player.isOp()) 
-        	m += "*";
+        boolean is_admin = mPlugin.IsPlayerAdmin(player);
+        boolean is_op = mPlugin.IsPlayerOP(player);
+        
+        Faction player_faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
+        String m = "";
+        
+        m += player_faction.GetChatColor() + "[" + player_faction.GetPrefix();
+
+        if(mPlugin.IsPlayerPermium(player))
+        	// write golden coin  = (R)
+        	m += ChatColor.GOLD + "\u00AE" + player_faction.GetChatColor();
+        
+        if(is_admin)	m += "!";
+        else if(is_op)	m += "*";
+        
         m += "] " + player.getDisplayName() + ": ";
-        if(is_admin) 
-        	m += ChatColor.RED;
-        else if(player.isOp())
-        	m += ChatColor.GOLD;
-        else
-        	m += ChatColor.WHITE;
+        
+        if(is_admin)	m += ChatColor.DARK_RED;
+        else if(is_op)	m += ChatColor.GOLD;
+        else			m += ChatColor.WHITE;
         
         m += event.getMessage();
         
         for(Player r: event.getRecipients()) {
         	r.sendMessage(m);
         }
-        Logger.getLogger("Minecraft").info("- " + player.getDisplayName() + ": " + event.getMessage());
+        Logger.getLogger("Minecraft").info(player.getDisplayName() + " said: " + event.getMessage());
         event.setCancelled(true);
     }
 	

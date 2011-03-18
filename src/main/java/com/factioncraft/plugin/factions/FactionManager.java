@@ -22,20 +22,26 @@ public class FactionManager {
 		c.load();
 		List<String> players = c.getKeys(null);
 		if(players != null) {
+			System.out.println(players.size() + " Player Factions loaded....");
 			for(String player: players) {
 				String faction = c.getString(player);
 				if(mPlugin.GetFactions().keySet().contains(faction)) {
 					// set player faction
 					mPlayerFactions.put(player, mPlugin.GetFactions().get(faction));
+				} else {
+					Logger.getLogger("Minecraft").warning("Player " + player + " has invalid faction: " + faction);
 				}
 			}
+		} else {
+			System.err.println("Could not load player factions.");
 		}
 	}
 	
 	public void Save() {
 		Configuration c = new Configuration(new File(mPlugin.getDataFolder(), PLAYER_FACTIONS_FILE));
 		for(String player: mPlayerFactions.keySet()) {
-			c.setProperty(player, mPlayerFactions.get(player).GetName());
+			if(mPlayerFactions.get(player) != null)
+				c.setProperty(player, mPlayerFactions.get(player).GetName());
 		}
 		c.save();
 		Logger.getLogger("Minecraft").info("Saved Factions. (" + mPlayerFactions.size() + ")");
@@ -60,7 +66,14 @@ public class FactionManager {
 	}
 	
 	public void SetPlayerFaction(Player player, Faction faction) {
-		mPlayerFactions.put(player.getName(), faction);
+		String name = player.getName();
+		if(!mPlayerFactions.containsKey(name) || mPlayerFactions.get(name) != faction || faction == null) {
+			// no faction before or different one, so join
+			mPlayerFactions.put(player.getName(), faction);
+			if(faction != null) {
+				faction.OnPlayerJoin(player);
+			}
+		}
 	}
 	
 	private FactionCraftPlugin mPlugin;

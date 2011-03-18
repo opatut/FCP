@@ -1,6 +1,7 @@
 package com.factioncraft.plugin.factions;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import com.factioncraft.plugin.FactionCraftPlugin;
 
@@ -17,6 +18,12 @@ public abstract class Faction {
 	public void OnEnable() {
 		// PluginManager pm = mPlugin.getServer().getPluginManager();
 	}
+	
+	/**
+	 * Called when a player joins the faction or a player of the faction joins the game.
+	 * @param player The player who joins.
+	 */
+	public void OnPlayerJoin(Player player) {}
 	
 	public abstract String GetName();
 	public abstract ChatColor GetChatColor();

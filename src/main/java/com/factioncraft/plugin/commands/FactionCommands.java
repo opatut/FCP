@@ -15,33 +15,59 @@ public class FactionCommands implements CommandExecutor {
     }
     
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    	// only players can use these commands (in-game)
+    	if(!(sender instanceof Player))
+    		return false;
+    	Player player = (Player)sender;
+    	
     	if(label.equalsIgnoreCase("factions")) {
     		String m = ChatColor.GREEN.toString() + mPlugin.GetFactions().size() + " Factions available:";
     		for(Faction f: mPlugin.GetFactions().values()) {
     			m += " " + f.GetChatColor().toString() + f.GetName();
     		}
-    		sender.sendMessage(m);
-    		Faction f = mPlugin.GetFactionManager().GetPlayerFaction((Player)sender);
+    		player.sendMessage(m);
+    		Faction f = mPlugin.GetFactionManager().GetPlayerFaction(player);
     		if(f != null) {
-	    		sender.sendMessage(ChatColor.GREEN + "> You are member of the " + f.GetChatColor() + 
+	    		player.sendMessage(ChatColor.GREEN + "> You are member of the " + f.GetChatColor() + 
 	    				f.GetName() + ChatColor.GREEN + " faction.");
     		} else {
-    			sender.sendMessage(ChatColor.RED + "> You are not currently member of any faction.");
+    			player.sendMessage(ChatColor.RED + "> You are not currently member of any faction.");
     		}
     		return true;
     	} else if(label.equalsIgnoreCase("joinfaction")) {
     		if(args.length >= 1) {
     			if(mPlugin.GetFactions().containsKey(args[0])) {
     				Faction f = mPlugin.GetFactions().get(args[0]);
-		    		mPlugin.GetFactionManager().SetPlayerFaction((Player)sender, f);
-		    		sender.sendMessage(ChatColor.GREEN + "You joined the " + f.GetChatColor() + f.GetName()
+		    		mPlugin.GetFactionManager().SetPlayerFaction(player, f);
+		    		player.sendMessage(ChatColor.GREEN + "You joined the " + f.GetChatColor() + f.GetName()
 		    				+ ChatColor.GREEN + " faction.");
     			} else {
-    				sender.sendMessage(ChatColor.RED + "The faction " + ChatColor.YELLOW 
+    				player.sendMessage(ChatColor.RED + "The faction " + ChatColor.YELLOW 
     						+ args[0] + ChatColor.RED + " does not exist.");
     			}
 	    		return true;
     		}
+    	} else if(label.equalsIgnoreCase("quitfaction")) {
+    		if(mPlugin.IsPlayerOP(player)) {
+    			String p = player.getName();
+    			if(args.length >= 1) {
+    				p = args[0];
+    			}
+    			Player target_player = mPlugin.getServer().getPlayer(p);
+    			if(target_player != null) {
+    				if(mPlugin.GetFactionManager().GetPlayerFaction(target_player) != null) {
+	    				mPlugin.GetFactionManager().SetPlayerFaction(target_player, null);
+	    				player.sendMessage(ChatColor.GREEN + "Success: " + p + " is now without faction.");
+    				} else {
+    					player.sendMessage(ChatColor.GREEN + "Pointless... " + p + " was in no faction! :D");
+    				}
+    			} else {
+    				player.sendMessage(ChatColor.RED + "Could not find player: " + p);
+    			}
+    		} else {
+    			player.sendMessage(ChatColor.RED + "Only OPs can let you quit your faction. Please contact them.");
+    		}
+    		return true;
     	}
     	return false;
     }
