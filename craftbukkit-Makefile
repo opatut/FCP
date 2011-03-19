@@ -1,0 +1,7 @@
+go: bake run
+
+bake:
+	cd ../fc/ && ant
+
+run:
+	./server
