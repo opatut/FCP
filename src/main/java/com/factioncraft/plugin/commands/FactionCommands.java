@@ -57,7 +57,14 @@ public class FactionCommands implements CommandExecutor {
     			if(target_player != null) {
     				if(mPlugin.GetFactionManager().GetPlayerFaction(target_player) != null) {
 	    				mPlugin.GetFactionManager().SetPlayerFaction(target_player, null);
-	    				player.sendMessage(ChatColor.GREEN + "Success: " + p + " is now without faction.");
+	    				if(! player.getName().equals(target_player.getName())) {
+	    					// the op reset someone's elses faction
+	    					player.sendMessage(ChatColor.GREEN + "Success: " + p + " is now without faction.");
+	    				}
+	    				target_player.sendMessage(ChatColor.GREEN + "Your faction been reset by " + 
+	    						ChatColor.WHITE + player.getName() + "."); 
+	    				target_player.sendMessage(ChatColor.GREEN + "You are being logged out to apply the changes...");
+	    				target_player.kickPlayer("Faction reset by "+player.getName()+". Please login again to apply the changes.");
     				} else {
     					player.sendMessage(ChatColor.GREEN + "Pointless... " + p + " was in no faction! :D");
     				}

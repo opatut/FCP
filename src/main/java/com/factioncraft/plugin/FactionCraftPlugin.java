@@ -76,6 +76,7 @@ public class FactionCraftPlugin extends JavaPlugin {
     	ADMINS_GROUP = c.getString("permissions.admins_group", ADMINS_GROUP);
     	OPS_GROUP = c.getString("permissions.ops_group", OPS_GROUP);
     	PREMIUM_PERMISSION = c.getString("permissions.premium", PREMIUM_PERMISSION);
+    	MERMEN_SWIM_SPEED = (float)c.getDouble("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
     }
     
     public void SaveConfiguration() {
@@ -84,6 +85,7 @@ public class FactionCraftPlugin extends JavaPlugin {
     	c.setProperty("permissions.admins_group", ADMINS_GROUP);
     	c.setProperty("permissions.ops_group", OPS_GROUP);
     	c.setProperty("permissions.premium", PREMIUM_PERMISSION);
+    	c.setProperty("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
     	c.save();
     }
     
@@ -154,4 +156,5 @@ public class FactionCraftPlugin extends JavaPlugin {
     public String ADMINS_GROUP = "Admins"; 
     public String OPS_GROUP = "Moderators"; 
     public String PREMIUM_PERMISSION = "factioncraft.premium";
+    public float MERMEN_SWIM_SPEED = 1.3F;
 }

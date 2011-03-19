@@ -36,5 +36,10 @@ public class OrcsEntityListener extends EntityListener {
 	}
 	
 	FactionCraftPlugin mPlugin;
-	public final int HEAL_DELAY = 5; // seconds between healing in fire / lava (1-2 hearts each time)
+	
+	/**
+	 * Seconds between healing in fire / lava (1-3 hearts each time)
+	 * Its propably not possible to do this more accurate, sorry.
+	 */
+	public final int HEAL_DELAY = 5; 
 }

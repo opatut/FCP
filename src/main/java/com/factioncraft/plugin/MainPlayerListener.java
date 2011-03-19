@@ -15,8 +15,6 @@ public class MainPlayerListener extends PlayerListener {
 	public void onPlayerJoin(PlayerEvent event) {
 		Player player = event.getPlayer();
 		
-		mPlugin.GetFactionManager().GetPlayerFaction(player).OnPlayerJoin(player);
-		
 		Faction faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
 		String c = ChatColor.LIGHT_PURPLE.toString();
 		if(faction == null) {
@@ -30,6 +28,7 @@ public class MainPlayerListener extends PlayerListener {
 			player.sendMessage(c + "faction specific perks!");
 			player.sendMessage(c + "====================================================");
 		} else {
+			faction.OnPlayerJoin(player);
 			player.sendMessage(c + "Welcome back, " + player.getName() + "!");
 			player.sendMessage("Your friends, the " + faction.GetChatColor() + faction.GetName() + c + " are with you.");
 		}

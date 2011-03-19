@@ -58,6 +58,11 @@ public class FactionManager {
 	}
 	
 	public boolean IsPlayerInFaction(Player player, Faction faction) {
+		if(faction == null) {
+			if (!mPlayerFactions.containsKey(player))
+				return true;
+			return mPlayerFactions.get(player) == null;
+		}
 		return IsPlayerInFaction(player.getName(), faction.GetName());
 	}
 	public boolean IsPlayerInFaction(String player, String faction) {
@@ -68,7 +73,7 @@ public class FactionManager {
 	public void SetPlayerFaction(Player player, Faction faction) {
 		String name = player.getName();
 		if(!mPlayerFactions.containsKey(name) || mPlayerFactions.get(name) != faction || faction == null) {
-			// no faction before or different one, so join
+			// the player had either no faction before or a different one, so join
 			mPlayerFactions.put(player.getName(), faction);
 			if(faction != null) {
 				faction.OnPlayerJoin(player);
