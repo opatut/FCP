@@ -53,6 +53,10 @@ public class FactionCraftPlugin extends JavaPlugin {
         getCommand("joinfaction").setExecutor(faction_commands);
         getCommand("quitfaction").setExecutor(faction_commands);
         
+        AdminsOpsCommands admins_ops_commands = new AdminsOpsCommands(this);
+        getCommand(admins_ops_commands.ADMIN_FLAG).setExecutor(admins_ops_commands);
+        getCommand(admins_ops_commands.OP_FLAG).setExecutor(admins_ops_commands);
+        
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.PLAYER_CHAT, new FactionChatListener(this), Priority.Highest, this);
         pm.registerEvent(Event.Type.PLAYER_JOIN, new MainPlayerListener(this), Priority.Normal, this);
@@ -76,19 +80,36 @@ public class FactionCraftPlugin extends JavaPlugin {
     public void LoadConfiguration() {
     	Configuration c = new Configuration(new File(getDataFolder(), "config.yml"));
     	c.load();
+    	
     	ADMINS_GROUP = c.getString("permissions.admins_group", ADMINS_GROUP);
     	OPS_GROUP = c.getString("permissions.ops_group", OPS_GROUP);
     	PREMIUM_PERMISSION = c.getString("permissions.premium", PREMIUM_PERMISSION);
+    	
     	MERMEN_SWIM_SPEED = (float)c.getDouble("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
+    	MERMEN_AXE_DAMAGE_MULTIPLIER = (float)c.getDouble("perks.mermen.axe_multiplier", MERMEN_AXE_DAMAGE_MULTIPLIER);
+    	
+    	HUMANS_BOW_DAMAGE_MULTIPLIER = (float)c.getDouble("perks.humans.bow_multiplier", HUMANS_BOW_DAMAGE_MULTIPLIER);
+    	
+    	ORCS_SWORD_DAMAGE_MULTIPLIER = (float)c.getDouble("perks.orcs.sword_multiplier", ORCS_SWORD_DAMAGE_MULTIPLIER);
+    	ORCS_HEAL_IN_FIRE_DELAY = c.getInt("perks.orcs.heal_in_fire_delay", ORCS_HEAL_IN_FIRE_DELAY);
     }
     
     public void SaveConfiguration() {
     	Configuration c = new Configuration(new File(getDataFolder(), "config.yml"));
     	c.load();
+    	
     	c.setProperty("permissions.admins_group", ADMINS_GROUP);
     	c.setProperty("permissions.ops_group", OPS_GROUP);
     	c.setProperty("permissions.premium", PREMIUM_PERMISSION);
+    	
     	c.setProperty("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
+    	c.setProperty("perks.mermen.axe_multiplier", MERMEN_AXE_DAMAGE_MULTIPLIER);
+    	
+    	c.setProperty("perks.humans.bow_multiplier", HUMANS_BOW_DAMAGE_MULTIPLIER);
+    	
+    	c.setProperty("perks.orcs.sword_multiplier", ORCS_SWORD_DAMAGE_MULTIPLIER);
+    	c.setProperty("perks.orcs.heal_in_fire_delay", ORCS_HEAL_IN_FIRE_DELAY);
+    	
     	c.save();
     }
     
@@ -164,5 +185,12 @@ public class FactionCraftPlugin extends JavaPlugin {
     public String ADMINS_GROUP = "Admins"; 
     public String OPS_GROUP = "Moderators"; 
     public String PREMIUM_PERMISSION = "factioncraft.premium";
+    
     public float MERMEN_SWIM_SPEED = 1.3F;
+    public float MERMEN_AXE_DAMAGE_MULTIPLIER = 1.2F;
+    
+    public float HUMANS_BOW_DAMAGE_MULTIPLIER = 1.3F;
+    
+    public float ORCS_SWORD_DAMAGE_MULTIPLIER = 1.2F;
+    public int ORCS_HEAL_IN_FIRE_DELAY = 8;
 }

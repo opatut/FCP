@@ -25,6 +25,16 @@ commands:
         usage: |
             /<command> - resets your own faction
             /<command> [player] - resets the faction of [player]
+    flagadmin:
+        description: Admins can toggle whether they are seen as such.
+        usage: |
+            /<command> - toggles the flag
+            /<command> [on|off] - sets the flag on or off
+    flagop:
+        description: OPs can toggle whether they are seen as such.
+        usage: |
+            /<command> - toggles the flag
+            /<command> [on|off] - sets the flag on or off
 
 #  clear:
 #    description: Clears your own or a player's inventory.

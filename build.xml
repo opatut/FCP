@@ -2,6 +2,8 @@
 	<property name="pluginname" value="FactionCraftPlugin"/>
 	<property name="bukkitjar" location="../Bukkit/dist/bukkit.jar"/>
     <property name="plugins" location="../craftbukkit/plugins/"/>
+    <property name="permissionsjar"
+        location="../craftbukkit/plugins/Permissions.jar" />
 
 	<property name="src" location="src"/>
 	<property name="bin" location="bin"/>
@@ -14,6 +16,7 @@
 	<target name="compile" depends="init">
 		<javac srcdir="${src}/main/java" destdir="${bin}" includeantruntime="false">
 			<classpath>
+                <pathelement location="${permissionsjar}" />
                 <pathelement location="${bukkitjar}" />
 			</classpath>
 		</javac>

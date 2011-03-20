@@ -19,6 +19,9 @@ public class Humans extends Faction {
 		HumansPlayerListener hpl = new HumansPlayerListener(mPlugin);
 		pm.registerEvent(Event.Type.PLAYER_PICKUP_ITEM, hpl, Priority.Normal, mPlugin);
 		pm.registerEvent(Event.Type.PLAYER_ITEM, hpl, Priority.Normal, mPlugin);
+		
+		HumansEntityListener hel = new HumansEntityListener(mPlugin);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGED, hel, Priority.Normal, mPlugin);
 	}
 
 	@Override
