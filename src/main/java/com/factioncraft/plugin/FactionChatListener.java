@@ -18,8 +18,8 @@ public class FactionChatListener extends PlayerListener {
         Player player = event.getPlayer();
         
         // pretend player to be merman
-        boolean is_admin = mPlugin.IsPlayerAdmin(player);
-        boolean is_op = mPlugin.IsPlayerOP(player);
+        boolean is_admin = mPlugin.IsPlayerAdmin(player) && mPlugin.GetPlayerFlagsManager().GetFlag(player, "flagadmin", false);
+        boolean is_op = mPlugin.IsPlayerOP(player) && mPlugin.GetPlayerFlagsManager().GetFlag(player, "flagop", false);
         
         Faction player_faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
         String m = "";

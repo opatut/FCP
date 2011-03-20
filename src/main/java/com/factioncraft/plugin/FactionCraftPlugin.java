@@ -23,9 +23,11 @@ public class FactionCraftPlugin extends JavaPlugin {
 	public FactionCraftPlugin() {
 		mFactions = new HashMap<String, Faction>();
 		mFactionManager = new FactionManager(this);
+		mPlayerFlagsManager = new PlayerFlagsManager(this);
 	}
 	
     public void onDisable() {
+    	mPlayerFlagsManager.Save();
     	mFactionManager.Save();
     	SaveConfiguration();
         //PluginManager pm = getServer().getPluginManager();
@@ -44,6 +46,7 @@ public class FactionCraftPlugin extends JavaPlugin {
         
         // Load player's factions now as the factions are already available
 		mFactionManager.Load();
+		mPlayerFlagsManager.Load();
 		
         FactionCommands faction_commands = new FactionCommands(this);
         getCommand("factions").setExecutor(faction_commands);
@@ -113,6 +116,10 @@ public class FactionCraftPlugin extends JavaPlugin {
     	return mFactionManager;
     }
     
+    public PlayerFlagsManager GetPlayerFlagsManager() {
+    	return mPlayerFlagsManager;
+    }
+    
     public boolean IsPlayerAdmin(Player player) {
     	if(Permissions != null) {
     		// Permissions plugin enabled
@@ -151,6 +158,7 @@ public class FactionCraftPlugin extends JavaPlugin {
 
     private HashMap<String, Faction> mFactions;
     private FactionManager mFactionManager;
+    private PlayerFlagsManager mPlayerFlagsManager;
     
     public static PermissionHandler Permissions;
     public String ADMINS_GROUP = "Admins"; 
