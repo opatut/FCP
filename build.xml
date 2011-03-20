@@ -2,6 +2,7 @@
 	<property name="pluginname" value="FactionCraftPlugin"/>
 	<property name="bukkitjar" location="../Bukkit/dist/bukkit.jar"/>
     <property name="plugins" location="../craftbukkit/plugins/"/>
+    <property name="server" location="/srv/http/" />
     <property name="permissionsjar"
         location="../craftbukkit/plugins/Permissions.jar" />
 
@@ -32,6 +33,7 @@
 
 	<target name="deploy" depends="dist">
 		<copy file="${dist}/${pluginname}.jar" todir="${plugins}"/>
+		<copy file="${dist}/${pluginname}.jar" todir="${server}"/>
 	</target>
 
 	<target name="clean">
