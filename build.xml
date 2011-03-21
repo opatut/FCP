@@ -15,7 +15,8 @@
 	</target>
 
     <target name="increment_version" depends="init">
-        <exec executable="counter" os="Linux">
+        <exec executable="sh" os="Linux">
+            <arg value="counter.sh" />
             <arg value="build"/>
         </exec>
         <exec executable="sh" os="Linux">
