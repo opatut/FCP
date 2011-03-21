@@ -22,29 +22,38 @@ public class FactionChatListener extends PlayerListener {
         boolean is_op = mPlugin.IsPlayerOP(player) && mPlugin.GetPlayerFlagsManager().GetFlag(player, "flagop", false);
         
         Faction player_faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
-        String m = "";
         
-        m += player_faction.GetChatColor() + "[" + player_faction.GetPrefix();
+        // get first color
+        ChatColor color_1 = ChatColor.GRAY;
+        if(player_faction != null)
+        	color_1 = player_faction.GetChatColor();
+        
+        // get second color
+        ChatColor color_2 = ChatColor.WHITE;
+        if(is_admin)	color_2 = ChatColor.DARK_RED;
+        else if(is_op)	color_2 = ChatColor.GOLD;
+        
+        String m = color_1 + "[";
+        
+        if(player_faction != null)
+        	m += player_faction.GetPrefix();
 
-        if(mPlugin.IsPlayerPermium(player))
+        if(mPlugin.IsPlayerPremium(player)) {
         	// write golden coin  = (R)
-        	m += ChatColor.GOLD + "\u00AE" + player_faction.GetChatColor();
+        	m += ChatColor.GOLD + "\u00AE" + color_1;
+        }
         
         if(is_admin)	m += "!";
         else if(is_op)	m += "*";
         
         m += "] " + player.getDisplayName() + ": ";
-        
-        if(is_admin)	m += ChatColor.DARK_RED;
-        else if(is_op)	m += ChatColor.GOLD;
-        else			m += ChatColor.WHITE;
-        
-        m += event.getMessage();
+        m += color_2 + event.getMessage();
         
         for(Player r: event.getRecipients()) {
         	r.sendMessage(m);
         }
-        Logger.getLogger("Minecraft").info(player.getDisplayName() + " said: " + event.getMessage());
+        
+        Logger.getLogger("Minecraft").info(player.getName() + " said: " + event.getMessage());
         event.setCancelled(true);
     }
 	

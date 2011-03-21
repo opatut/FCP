@@ -14,14 +14,23 @@
 		<mkdir dir="${bin}"/>
 	</target>
 
-	<target name="compile" depends="init">
+    <target name="increment_version" depends="init">
+        <exec executable="counter" os="Linux">
+            <arg value="build"/>
+        </exec>
+        <exec executable="sh" os="Linux">
+            <arg value="setbuild.sh" />
+        </exec>
+    </target>
+
+	<target name="compile" depends="increment_version">
 		<javac srcdir="${src}/main/java" destdir="${bin}" includeantruntime="false">
 			<classpath>
                 <pathelement location="${permissionsjar}" />
                 <pathelement location="${bukkitjar}" />
 			</classpath>
 		</javac>
-	</target>
+    </target>
 
 	<target name="dist" depends="compile">
 		<mkdir dir="${dist}"/>

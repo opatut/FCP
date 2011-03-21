@@ -83,7 +83,8 @@ public class FactionCraftPlugin extends JavaPlugin {
     	
     	ADMINS_GROUP = c.getString("permissions.admins_group", ADMINS_GROUP);
     	OPS_GROUP = c.getString("permissions.ops_group", OPS_GROUP);
-    	PREMIUM_PERMISSION = c.getString("permissions.premium", PREMIUM_PERMISSION);
+    	PREMIUM_GROUP = c.getString("permissions.premium_group", PREMIUM_GROUP);
+    	PLAYER_GROUP = c.getString("permissions.player_group", PLAYER_GROUP);
     	
     	MERMEN_SWIM_SPEED = (float)c.getDouble("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
     	MERMEN_AXE_DAMAGE_MULTIPLIER = (float)c.getDouble("perks.mermen.axe_multiplier", MERMEN_AXE_DAMAGE_MULTIPLIER);
@@ -100,7 +101,8 @@ public class FactionCraftPlugin extends JavaPlugin {
     	
     	c.setProperty("permissions.admins_group", ADMINS_GROUP);
     	c.setProperty("permissions.ops_group", OPS_GROUP);
-    	c.setProperty("permissions.premium", PREMIUM_PERMISSION);
+    	c.setProperty("permissions.premium_group", PREMIUM_GROUP);
+    	c.setProperty("permissions.player_group", PLAYER_GROUP);
     	
     	c.setProperty("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
     	c.setProperty("perks.mermen.axe_multiplier", MERMEN_AXE_DAMAGE_MULTIPLIER);
@@ -166,15 +168,38 @@ public class FactionCraftPlugin extends JavaPlugin {
     	}
     }
     
-    public boolean IsPlayerPermium(Player player) {
+    public boolean IsPlayerPremium(Player player) {
     	if(Permissions != null) {
     		// Permissions plugin enabled
-    		return Permissions.has(player, PREMIUM_PERMISSION);
+    		return Permissions.inGroup(player.getWorld().getName(), player.getName(), PREMIUM_GROUP);
     	}
     	// if no Permissions plugin available, premium features are disabled
 		return false;
     }
     
+    public void TogglePlayerPremium(Player player) {
+    	SetPlayerPremium(player, ! IsPlayerPremium(player));
+    }
+    
+    public void SetPlayerPremium(Player player, boolean premium) {
+    	String group = premium ? PREMIUM_GROUP : PLAYER_GROUP;
+    	SetPermissionsPlayerGroup(player, group);
+    }
+    
+    public void SetPermissionsPlayerPermission(Player player, String permissions, boolean value) {
+    	// set or unset player's value
+    }
+    
+    public void SetPermissionsPlayerGroup(Player player, String group) {
+    	String w = player.getWorld().getName();
+    	
+    	Configuration c = new Configuration(new File(getDataFolder().getParentFile(), "Permissions" + File.pathSeparator + w + ".yml"));
+    	c.load();
+    	
+    	c.setProperty("users."+player.getName()+".group", group);
+    	
+    	c.save();
+    }
     
 
     private HashMap<String, Faction> mFactions;
@@ -184,7 +209,8 @@ public class FactionCraftPlugin extends JavaPlugin {
     public static PermissionHandler Permissions;
     public String ADMINS_GROUP = "Admins"; 
     public String OPS_GROUP = "Moderators"; 
-    public String PREMIUM_PERMISSION = "factioncraft.premium";
+    public String PREMIUM_GROUP = "Donators";
+    public String PLAYER_GROUP = "Players";
     
     public float MERMEN_SWIM_SPEED = 1.3F;
     public float MERMEN_AXE_DAMAGE_MULTIPLIER = 1.2F;

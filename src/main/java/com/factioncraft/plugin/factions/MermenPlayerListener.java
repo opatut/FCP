@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.Vector;
 
 import com.factioncraft.plugin.FactionCraftPlugin;
 
@@ -29,6 +31,12 @@ public class MermenPlayerListener extends PlayerListener {
 					}
 				}
 			}
+			
+			if(p.getItemInHand().getType() == Material.FEATHER) {
+				Vector dist = new Vector(0, 0.5, 0).add(p.getLocation().getDirection().multiply(1.0));
+				p.setVelocity(dist);
+			}
+			
 		}
 		super.onPlayerAnimation(event);
 

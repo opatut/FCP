@@ -1,7 +1,7 @@
 go: bake run
 
 bake:
-	cd ../fc/ && ant
+	cd ../factioncraft/ && ant
 
 run:
 	./server
