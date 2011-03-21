@@ -24,9 +24,11 @@ public class FactionCraftPlugin extends JavaPlugin {
 		mFactions = new HashMap<String, Faction>();
 		mFactionManager = new FactionManager(this);
 		mPlayerFlagsManager = new PlayerFlagsManager(this);
+		mFactionSpawnManager = new FactionSpawnManager(this);
 	}
 	
     public void onDisable() {
+    	mFactionSpawnManager.Save();
     	mPlayerFlagsManager.Save();
     	mFactionManager.Save();
     	SaveConfiguration();
@@ -47,19 +49,24 @@ public class FactionCraftPlugin extends JavaPlugin {
         // Load player's factions now as the factions are already available
 		mFactionManager.Load();
 		mPlayerFlagsManager.Load();
+		mFactionSpawnManager.Load();
 		
         FactionCommands faction_commands = new FactionCommands(this);
         getCommand("factions").setExecutor(faction_commands);
         getCommand("joinfaction").setExecutor(faction_commands);
         getCommand("quitfaction").setExecutor(faction_commands);
+        getCommand("factionspawn").setExecutor(faction_commands);
         
         AdminsOpsCommands admins_ops_commands = new AdminsOpsCommands(this);
         getCommand(admins_ops_commands.ADMIN_FLAG).setExecutor(admins_ops_commands);
         getCommand(admins_ops_commands.OP_FLAG).setExecutor(admins_ops_commands);
         
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Event.Type.PLAYER_CHAT, new FactionChatListener(this), Priority.Highest, this);
-        pm.registerEvent(Event.Type.PLAYER_JOIN, new MainPlayerListener(this), Priority.Normal, this);
+        MainPlayerListener mpl = new MainPlayerListener(this);
+        FactionChatListener fcl = new FactionChatListener(this);
+        pm.registerEvent(Event.Type.PLAYER_CHAT, fcl, Priority.Highest, this);
+        pm.registerEvent(Event.Type.PLAYER_JOIN, mpl , Priority.Normal, this);
+        pm.registerEvent(Event.Type.PLAYER_RESPAWN, mpl , Priority.High, this);
         
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
@@ -68,9 +75,9 @@ public class FactionCraftPlugin extends JavaPlugin {
     private void SetupPermissions() {
         Plugin permissions_plugin = getServer().getPluginManager().getPlugin("Permissions");
 
-        if (Permissions == null) {
+        if (mPermissions == null) {
             if (permissions_plugin != null) {
-                Permissions = ((Permissions)permissions_plugin).getHandler();
+                mPermissions = ((Permissions)permissions_plugin).getHandler();
             } else {
                 Logger.getLogger("Minecraft").info("Permission system not detected, defaulting to OP");
             }
@@ -83,8 +90,7 @@ public class FactionCraftPlugin extends JavaPlugin {
     	
     	ADMINS_GROUP = c.getString("permissions.admins_group", ADMINS_GROUP);
     	OPS_GROUP = c.getString("permissions.ops_group", OPS_GROUP);
-    	PREMIUM_GROUP = c.getString("permissions.premium_group", PREMIUM_GROUP);
-    	PLAYER_GROUP = c.getString("permissions.player_group", PLAYER_GROUP);
+    	PREMIUM_PERMISSION = c.getString("permissions.premium", PREMIUM_PERMISSION);
     	
     	MERMEN_SWIM_SPEED = (float)c.getDouble("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
     	MERMEN_AXE_DAMAGE_MULTIPLIER = (float)c.getDouble("perks.mermen.axe_multiplier", MERMEN_AXE_DAMAGE_MULTIPLIER);
@@ -101,8 +107,7 @@ public class FactionCraftPlugin extends JavaPlugin {
     	
     	c.setProperty("permissions.admins_group", ADMINS_GROUP);
     	c.setProperty("permissions.ops_group", OPS_GROUP);
-    	c.setProperty("permissions.premium_group", PREMIUM_GROUP);
-    	c.setProperty("permissions.player_group", PLAYER_GROUP);
+    	c.setProperty("permissions.premium", PREMIUM_PERMISSION);
     	
     	c.setProperty("perks.mermen.swim_speed", MERMEN_SWIM_SPEED);
     	c.setProperty("perks.mermen.axe_multiplier", MERMEN_AXE_DAMAGE_MULTIPLIER);
@@ -143,10 +148,14 @@ public class FactionCraftPlugin extends JavaPlugin {
     	return mPlayerFlagsManager;
     }
     
+    public FactionSpawnManager GetFactionSpawnManager() {
+    	return mFactionSpawnManager;
+    }
+    
     public boolean IsPlayerAdmin(Player player) {
-    	if(Permissions != null) {
+    	if(mPermissions != null) {
     		// Permissions plugin enabled
-    		return Permissions.inGroup(player.getWorld().getName(), player.getName(), ADMINS_GROUP);
+    		return mPermissions.inGroup(player.getWorld().getName(), player.getName(), ADMINS_GROUP);
     	} else {
     		// return whether user is OP (default minecraft feature)
     		return player.isOp();
@@ -158,10 +167,10 @@ public class FactionCraftPlugin extends JavaPlugin {
     	if(IsPlayerAdmin(player))
     		return true;
     	
-    	if(Permissions != null) {
+    	if(mPermissions != null) {
     		// Permissions plugin enabled
     		// (also returns true if user is admins, as the admins group should inherit from ops)
-    		return Permissions.inGroup(player.getWorld().getName(), player.getName(), OPS_GROUP);
+    		return mPermissions.inGroup(player.getWorld().getName(), player.getName(), OPS_GROUP);
     	} else {
     		// return whether user is OP (default minecraft feature)
     		return player.isOp();
@@ -169,48 +178,36 @@ public class FactionCraftPlugin extends JavaPlugin {
     }
     
     public boolean IsPlayerPremium(Player player) {
-    	if(Permissions != null) {
+    	if(mPermissions != null) {
     		// Permissions plugin enabled
-    		return Permissions.inGroup(player.getWorld().getName(), player.getName(), PREMIUM_GROUP);
+    		return mPermissions.has(player, PREMIUM_PERMISSION);
     	}
     	// if no Permissions plugin available, premium features are disabled
 		return false;
     }
     
-    public void TogglePlayerPremium(Player player) {
-    	SetPlayerPremium(player, ! IsPlayerPremium(player));
-    }
-    
-    public void SetPlayerPremium(Player player, boolean premium) {
-    	String group = premium ? PREMIUM_GROUP : PLAYER_GROUP;
-    	SetPermissionsPlayerGroup(player, group);
-    }
-    
-    public void SetPermissionsPlayerPermission(Player player, String permissions, boolean value) {
-    	// set or unset player's value
-    }
-    
-    public void SetPermissionsPlayerGroup(Player player, String group) {
-    	String w = player.getWorld().getName();
-    	
-    	Configuration c = new Configuration(new File(getDataFolder().getParentFile(), "Permissions" + File.pathSeparator + w + ".yml"));
-    	c.load();
-    	
-    	c.setProperty("users."+player.getName()+".group", group);
-    	
-    	c.save();
-    }
-    
+    public Faction GetFactionByName(String name) {
+    	if(mFactions.containsKey(name)) {
+    		return mFactions.get(name);
+    	} else {
+    		for(String faction: mFactions.keySet()) {
+    			if(faction.equalsIgnoreCase(name)) {
+    				return mFactions.get(faction);
+    			}
+    		}
+    	}
+    	return null;
+	}
 
     private HashMap<String, Faction> mFactions;
     private FactionManager mFactionManager;
     private PlayerFlagsManager mPlayerFlagsManager;
+    private FactionSpawnManager mFactionSpawnManager;
     
-    public static PermissionHandler Permissions;
+    public PermissionHandler mPermissions;
     public String ADMINS_GROUP = "Admins"; 
     public String OPS_GROUP = "Moderators"; 
-    public String PREMIUM_GROUP = "Donators";
-    public String PLAYER_GROUP = "Players";
+    public String PREMIUM_PERMISSION = "factioncraft.premium";
     
     public float MERMEN_SWIM_SPEED = 1.3F;
     public float MERMEN_AXE_DAMAGE_MULTIPLIER = 1.2F;

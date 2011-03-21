@@ -1,15 +1,31 @@
 package com.factioncraft.plugin;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import com.factioncraft.plugin.factions.Faction;
 
 public class MainPlayerListener extends PlayerListener {
 	public MainPlayerListener(FactionCraftPlugin plugin) {
 		mPlugin = plugin;
+	}
+	
+	@Override
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		Location loc = mPlugin.GetFactionSpawnManager().GetTeleportLocation(event.getPlayer());
+		if(loc != null) {
+			event.setRespawnLocation(loc);
+			Faction f = mPlugin.GetFactionManager().GetPlayerFaction(event.getPlayer());
+			if(f != null) {
+				event.getPlayer().sendMessage(ChatColor.GREEN + "You respawn at the faction spawn of the " + 
+						f.GetChatColor() + f.GetName() + ChatColor.GREEN + ".");
+			}
+		}
+		super.onPlayerRespawn(event);
 	}
 	
 	public void onPlayerJoin(PlayerEvent event) {

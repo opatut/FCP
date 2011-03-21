@@ -36,8 +36,8 @@ public class FactionCommands implements CommandExecutor {
     		return true;
     	} else if(label.equalsIgnoreCase("joinfaction")) {
     		if(args.length >= 1) {
-    			if(mPlugin.GetFactions().containsKey(args[0])) {
-    				Faction f = mPlugin.GetFactions().get(args[0]);
+    			Faction f = mPlugin.GetFactionByName(args[0]);
+    			if(f != null) {
 		    		mPlugin.GetFactionManager().SetPlayerFaction(player, f);
 		    		player.sendMessage(ChatColor.GREEN + "You joined the " + f.GetChatColor() + f.GetName()
 		    				+ ChatColor.GREEN + " faction.");
@@ -75,6 +75,56 @@ public class FactionCommands implements CommandExecutor {
     			player.sendMessage(ChatColor.RED + "Only OPs can let you quit your faction. Please contact them.");
     		}
     		return true;
+    	} else if (label.equalsIgnoreCase("factionspawn")) {
+    		if(args.length == 0) {
+    			// teleport to own's faction's spawn
+    			if(mPlugin.mPermissions.has(player, "factioncraft.factionspawn.own")) {
+    				mPlugin.GetFactionSpawnManager().Teleport(player, true);
+    			} else {
+    				player.sendMessage(ChatColor.RED + "You are not allowed to teleport yourself to your spawn.");
+    			}
+    			return true;
+    		} else if(args.length == 1) {
+    			String f = args[0];
+    			Faction faction = mPlugin.GetFactionByName(f);
+    			Faction player_faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
+    			if(faction != null) {
+	    			if(mPlugin.mPermissions.has(player, "factioncraft.factionspawn.custom") ||
+	    					player_faction == faction) {
+		    			if(!mPlugin.GetFactionSpawnManager().Teleport(player, faction, false))
+		    				player.sendMessage(ChatColor.RED + "The faction's teleport is not set.");
+	    			} else {
+	    				player.sendMessage(ChatColor.RED + "You are not allowed to teleport yourself to the desired spawn.");
+	    			}
+    			} else {
+    				player.sendMessage(ChatColor.RED + "The faction " + ChatColor.WHITE + f + ChatColor.RED + " could not be found.");
+    			}
+    			return true;
+    		} else if(args.length == 2) {
+    			String cmd = args[1].toLowerCase();
+    			if(cmd.equals("set") || cmd.equals("unset")) {
+    				if(mPlugin.mPermissions.has(player, "factioncraft.factionspawn.edit")) {
+		    			String f = args[0];
+		    			Faction faction = mPlugin.GetFactionByName(f);
+		    			if(faction != null) {
+		    				if(cmd.equals("set")) {
+		    					mPlugin.GetFactionSpawnManager().SetSpawn(player.getWorld(), faction.GetName(), player.getLocation());
+		    					player.sendMessage(ChatColor.GREEN + "The faction spawn for " + faction.GetChatColor() + faction.GetName() 
+		    							+ ChatColor.GREEN + " has been set.");
+		    				} else if(cmd.equals("unset")) {
+		    					mPlugin.GetFactionSpawnManager().SetSpawn(player.getWorld(), faction.GetName(), null);
+		    					player.sendMessage(ChatColor.GREEN + "The faction spawn for " + faction.GetChatColor() + faction.GetName() 
+		    							+ ChatColor.GREEN + " has been unset.");
+		    				}
+		    			} else {
+		    				player.sendMessage(ChatColor.RED + "The faction " + ChatColor.WHITE + f + ChatColor.RED + " could not be found.");
+		    			}
+    				} else {
+    					player.sendMessage(ChatColor.RED + "You are not allowed to edit faction spawns.");
+    				}
+	    			return true;
+    			}
+    		}
     	}
     	return false;
     }
