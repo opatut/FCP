@@ -1,6 +1,6 @@
 name: FactionCraftPlugin
 main: com.factioncraft.plugin.FactionCraftPlugin
-version: 0.0.24
+version: 0.2.18
 website: http://www.factioncraft.com
 author: The FactionCraft Team
 description: >
@@ -42,7 +42,11 @@ commands:
             /<command> <faction> - teleports to the <faction>'s spawn (permission: 'factioncraft.factionspawn.custom')
             /<command> <faction> set - sets the spawn for <faction> (permission: 'factioncraft.factionspawn.edit')
             /<command> <faction> unset - resets the spawn for <faction> (permission: 'factioncraft.factionspawn.edit')
-            /<command> list - lists the factions' spawn locations
+    playerfaction:
+        description: Print the faction of a player.
+        usage: |
+            /<command> - Print your own faction.
+            /<command> <player> - Print <player>'s faction.
 
 #  clear:
 #    description: Clears your own or a player's inventory.

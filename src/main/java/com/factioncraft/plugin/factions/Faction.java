@@ -19,6 +19,14 @@ public abstract class Faction {
 		// PluginManager pm = mPlugin.getServer().getPluginManager();
 	}
 	
+	public boolean MatchesAliasesIgnoreCase(String name) {
+		for(String alias: GetAliases()) {
+			if(name.equalsIgnoreCase(alias))
+				return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Called when a player joins the faction or a player of the faction joins the game.
 	 * @param player The player who joins.
@@ -26,6 +34,7 @@ public abstract class Faction {
 	public void OnPlayerJoin(Player player) {}
 	
 	public abstract String GetName();
+	public abstract String[] GetAliases();
 	public abstract ChatColor GetChatColor();
 	public abstract String GetPrefix();
 	

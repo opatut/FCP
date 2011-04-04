@@ -66,7 +66,8 @@ public class FactionManager {
 		return IsPlayerInFaction(player.getName(), faction.GetName());
 	}
 	public boolean IsPlayerInFaction(String player, String faction) {
-		return mPlayerFactions.containsKey(player) && 
+		return mPlayerFactions.containsKey(player) &&
+			mPlayerFactions.get(player) != null && 
 			mPlayerFactions.get(player).GetName().equals(faction);
 	}
 	

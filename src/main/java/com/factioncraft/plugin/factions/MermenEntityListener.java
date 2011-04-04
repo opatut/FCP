@@ -30,11 +30,6 @@ public class MermenEntityListener extends EntityListener {
 					return;
 				}
 			}
-			
-			if(event.getCause() == DamageCause.FALL && player.getItemInHand().getType() == Material.FEATHER) {
-				event.setCancelled(true);
-				return;
-			}
 		}
 		
 		if(event instanceof EntityDamageByEntityEvent) {

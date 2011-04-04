@@ -18,15 +18,21 @@ public class Humans extends Faction {
 		
 		HumansPlayerListener hpl = new HumansPlayerListener(mPlugin);
 		pm.registerEvent(Event.Type.PLAYER_PICKUP_ITEM, hpl, Priority.Normal, mPlugin);
-		pm.registerEvent(Event.Type.PLAYER_ITEM, hpl, Priority.Normal, mPlugin);
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, hpl, Priority.Normal, mPlugin);
 		
 		HumansEntityListener hel = new HumansEntityListener(mPlugin);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGED, hel, Priority.Normal, mPlugin);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGE, hel, Priority.Normal, mPlugin);
 	}
 
 	@Override
 	public String GetName() {
 		return "Humans";
+	}
+	
+	@Override
+	public String[] GetAliases() {
+		String[] r = {"Humans", "Human", "Man", "Men", "Elf", "Elves"};
+		return r;
 	}
 
 	@Override

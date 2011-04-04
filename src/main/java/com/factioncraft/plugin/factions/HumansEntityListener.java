@@ -26,7 +26,6 @@ public class HumansEntityListener extends EntityListener {
 						int dmg_old = e.getDamage();
 						float dmg_new = dmg_old * mPlugin.HUMANS_BOW_DAMAGE_MULTIPLIER;
 						int dmg_new_i = (int)Math.ceil(dmg_new);
-						mPlugin.getServer().broadcastMessage(event.getDamage() + " > " + dmg_new + " > " + dmg_new_i);
 						event.setDamage(dmg_new_i);
 					}
 				}

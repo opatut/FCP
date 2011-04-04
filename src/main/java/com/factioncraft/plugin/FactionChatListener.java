@@ -17,11 +17,16 @@ public class FactionChatListener extends PlayerListener {
 	public void onPlayerChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
         
-        // pretend player to be merman
+        Faction player_faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
+        
+        boolean faction_chat = false;
+        if(event.getMessage().trim().startsWith(mPlugin.FACTION_CHAT_PREFIX) && player_faction != null) {
+        	event.setMessage(event.getMessage().substring(mPlugin.FACTION_CHAT_PREFIX.length()));
+        	faction_chat = true;
+        }
+        
         boolean is_admin = mPlugin.IsPlayerAdmin(player) && mPlugin.GetPlayerFlagsManager().GetFlag(player, "flagadmin", false);
         boolean is_op = mPlugin.IsPlayerOP(player) && mPlugin.GetPlayerFlagsManager().GetFlag(player, "flagop", false);
-        
-        Faction player_faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
         
         // get first color
         ChatColor color_1 = ChatColor.GRAY;
@@ -46,14 +51,19 @@ public class FactionChatListener extends PlayerListener {
         if(is_admin)	m += "!";
         else if(is_op)	m += "*";
         
-        m += "] " + player.getDisplayName() + ": ";
+        m += "] " + player.getName() + ": ";
+        if(faction_chat) {
+        	m += (player_faction.GetChatColor() != ChatColor.YELLOW ? ChatColor.YELLOW : ChatColor.BLUE) + "<Faction chat> ";
+        }
         m += color_2 + event.getMessage();
         
         for(Player r: event.getRecipients()) {
-        	r.sendMessage(m);
+        	if(!faction_chat || mPlugin.GetFactionManager().GetPlayerFaction(r) == player_faction)
+        		r.sendMessage(m);
         }
         
-        Logger.getLogger("Minecraft").info(player.getName() + " said: " + event.getMessage());
+        Logger.getLogger("Minecraft").info(player.getName() + " said: " 
+        		+ (faction_chat ? "<Faction chat> ":"") + event.getMessage());
         event.setCancelled(true);
     }
 	

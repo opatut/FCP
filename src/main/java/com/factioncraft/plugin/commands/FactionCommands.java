@@ -35,12 +35,25 @@ public class FactionCommands implements CommandExecutor {
     		}
     		return true;
     	} else if(label.equalsIgnoreCase("joinfaction")) {
-    		if(args.length >= 1) {
+    		if(mPlugin.GetFactionManager().GetPlayerFaction(player) != null) {
+    			if(mPlugin.IsPlayerOP(player)) {
+    				player.sendMessage(ChatColor.RED + "You have to "+ ChatColor.WHITE +"/quitfaction" + ChatColor.RED + " first.");
+    			} else {
+    				player.sendMessage(ChatColor.RED + "You have to quit your faction first. Ask an OP/Admin to reset your faction for you.");
+    			}
+    			return true;
+    		} else if(args.length >= 1) {
     			Faction f = mPlugin.GetFactionByName(args[0]);
     			if(f != null) {
-		    		mPlugin.GetFactionManager().SetPlayerFaction(player, f);
-		    		player.sendMessage(ChatColor.GREEN + "You joined the " + f.GetChatColor() + f.GetName()
-		    				+ ChatColor.GREEN + " faction.");
+    				if(mPlugin.mPermissions.has(player, "factioncraft.join."+f.GetName().toLowerCase())) {
+			    		mPlugin.GetFactionManager().SetPlayerFaction(player, f);
+			    		player.sendMessage(ChatColor.GREEN + "You joined the " + f.GetChatColor() + f.GetName()
+			    				+ ChatColor.GREEN + " faction.");
+    				} else {
+    					player.sendMessage(ChatColor.RED + "You are not allowed to join the " + f.GetChatColor() 
+    							+ f.GetName() + ChatColor.RED + ".");
+    					
+    				}
     			} else {
     				player.sendMessage(ChatColor.RED + "The faction " + ChatColor.YELLOW 
     						+ args[0] + ChatColor.RED + " does not exist.");
@@ -92,7 +105,7 @@ public class FactionCommands implements CommandExecutor {
 	    			if(mPlugin.mPermissions.has(player, "factioncraft.factionspawn.custom") ||
 	    					player_faction == faction) {
 		    			if(!mPlugin.GetFactionSpawnManager().Teleport(player, faction, false))
-		    				player.sendMessage(ChatColor.RED + "The faction's teleport is not set.");
+		    				player.sendMessage(ChatColor.RED + "The faction's spawn location is not set.");
 	    			} else {
 	    				player.sendMessage(ChatColor.RED + "You are not allowed to teleport yourself to the desired spawn.");
 	    			}
@@ -124,6 +137,22 @@ public class FactionCommands implements CommandExecutor {
     				}
 	    			return true;
     			}
+    		}
+    	} else if(label.equalsIgnoreCase("playerfaction")) {
+    		if(args.length <= 1) {
+    			String p = player.getName();
+    			if(args.length == 1) {
+    				p = args[0];
+    			}
+    			Faction f = mPlugin.GetFactionManager().GetPlayerFaction(p);
+    			if(f == null) {
+    				player.sendMessage(ChatColor.RED + (p.equals(player.getName()) ? "You have" : "The player has") 
+    						+ " not joined any faction yet.");
+    			} else {
+    				player.sendMessage(ChatColor.GREEN + (p.equals(player.getName()) ? "Your are" : "The player is") 
+    						+ " member of the " + f.GetChatColor() + f.GetName() + ChatColor.GREEN + " faction.");
+    			}
+    			return true;
     		}
     	}
     	return false;

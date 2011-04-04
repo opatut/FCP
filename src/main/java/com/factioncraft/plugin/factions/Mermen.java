@@ -18,8 +18,8 @@ public class Mermen extends Faction {
 		PluginManager pm = mPlugin.getServer().getPluginManager();
 		MermenPlayerListener mpl = new MermenPlayerListener(mPlugin);
 		MermenEntityListener mel = new MermenEntityListener(mPlugin);
-		pm.registerEvent(Event.Type.PLAYER_ANIMATION, mpl , Priority.Normal, mPlugin);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGED, mel, Priority.Normal, mPlugin);
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, mpl , Priority.Normal, mPlugin);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGE, mel, Priority.Normal, mPlugin);
 	}
 	
 	@Override
@@ -30,6 +30,12 @@ public class Mermen extends Faction {
 	@Override
 	public String GetName() {
 		return "Mermen";
+	}
+	
+	@Override
+	public String[] GetAliases() {
+		String[] r = {"Mermen", "Merman", "Mermaid", "Merfolk", "Swimmer"};
+		return r;
 	}
 
 	@Override

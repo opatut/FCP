@@ -56,6 +56,7 @@ public class FactionCraftPlugin extends JavaPlugin {
         getCommand("joinfaction").setExecutor(faction_commands);
         getCommand("quitfaction").setExecutor(faction_commands);
         getCommand("factionspawn").setExecutor(faction_commands);
+        getCommand("playerfaction").setExecutor(faction_commands);
         
         AdminsOpsCommands admins_ops_commands = new AdminsOpsCommands(this);
         getCommand(admins_ops_commands.ADMIN_FLAG).setExecutor(admins_ops_commands);
@@ -88,6 +89,9 @@ public class FactionCraftPlugin extends JavaPlugin {
     	Configuration c = new Configuration(new File(getDataFolder(), "config.yml"));
     	c.load();
     	
+    	WELCOME_MESSAGE = c.getString("general.welcome_message", WELCOME_MESSAGE);
+    	FACTION_CHAT_PREFIX = c.getString("general.faction_chat_prefix", FACTION_CHAT_PREFIX);
+    	
     	ADMINS_GROUP = c.getString("permissions.admins_group", ADMINS_GROUP);
     	OPS_GROUP = c.getString("permissions.ops_group", OPS_GROUP);
     	PREMIUM_PERMISSION = c.getString("permissions.premium", PREMIUM_PERMISSION);
@@ -99,11 +103,17 @@ public class FactionCraftPlugin extends JavaPlugin {
     	
     	ORCS_SWORD_DAMAGE_MULTIPLIER = (float)c.getDouble("perks.orcs.sword_multiplier", ORCS_SWORD_DAMAGE_MULTIPLIER);
     	ORCS_HEAL_IN_FIRE_DELAY = c.getInt("perks.orcs.heal_in_fire_delay", ORCS_HEAL_IN_FIRE_DELAY);
+    	
+    	DARKSEEKERS_MAX_FLAPS = c.getInt("perks.darkseekers.max_flaps", DARKSEEKERS_MAX_FLAPS);
+    	DARKSEEKERS_FLIGHT_SPEED = (float) c.getDouble("perks.darkseekers.flight_speed", DARKSEEKERS_FLIGHT_SPEED);
     }
     
     public void SaveConfiguration() {
     	Configuration c = new Configuration(new File(getDataFolder(), "config.yml"));
     	c.load();
+    	
+    	c.setProperty("general.welcome_message", WELCOME_MESSAGE);
+    	c.setProperty("general.faction_chat_prefix", FACTION_CHAT_PREFIX);
     	
     	c.setProperty("permissions.admins_group", ADMINS_GROUP);
     	c.setProperty("permissions.ops_group", OPS_GROUP);
@@ -117,6 +127,9 @@ public class FactionCraftPlugin extends JavaPlugin {
     	c.setProperty("perks.orcs.sword_multiplier", ORCS_SWORD_DAMAGE_MULTIPLIER);
     	c.setProperty("perks.orcs.heal_in_fire_delay", ORCS_HEAL_IN_FIRE_DELAY);
     	
+    	c.setProperty("perks.darkseekers.max_flaps", DARKSEEKERS_MAX_FLAPS);
+    	c.setProperty("perks.darkseekers.flight_speed", DARKSEEKERS_FLIGHT_SPEED);
+    	
     	c.save();
     }
     
@@ -124,6 +137,7 @@ public class FactionCraftPlugin extends JavaPlugin {
     	LoadFaction(new Mermen(this));
     	LoadFaction(new Humans(this));
     	LoadFaction(new Orcs(this));
+    	LoadFaction(new Darkseekers(this));
     }
     
     public void LoadFaction(Faction faction) {
@@ -187,15 +201,24 @@ public class FactionCraftPlugin extends JavaPlugin {
     }
     
     public Faction GetFactionByName(String name) {
+    	// try directly by key
     	if(mFactions.containsKey(name)) {
     		return mFactions.get(name);
-    	} else {
-    		for(String faction: mFactions.keySet()) {
-    			if(faction.equalsIgnoreCase(name)) {
-    				return mFactions.get(faction);
-    			}
-    		}
     	}
+    	// try by key, ignore case
+		for(String faction: mFactions.keySet()) {
+			if(faction.equalsIgnoreCase(name)) {
+				return mFactions.get(faction);
+			}
+		}
+		// try by aliases
+		for(String faction: mFactions.keySet()) {
+			Faction f = mFactions.get(faction);
+			if(f.MatchesAliasesIgnoreCase(name)) {
+				return f;
+			}
+		}
+		// no luck :D
     	return null;
 	}
 
@@ -211,9 +234,12 @@ public class FactionCraftPlugin extends JavaPlugin {
     
     public float MERMEN_SWIM_SPEED = 1.3F;
     public float MERMEN_AXE_DAMAGE_MULTIPLIER = 1.2F;
-    
     public float HUMANS_BOW_DAMAGE_MULTIPLIER = 1.3F;
-    
     public float ORCS_SWORD_DAMAGE_MULTIPLIER = 1.2F;
     public int ORCS_HEAL_IN_FIRE_DELAY = 8;
+    public float DARKSEEKERS_FLIGHT_SPEED = 0.6F;
+    public int DARKSEEKERS_MAX_FLAPS = 10;
+    
+    public String WELCOME_MESSAGE = "Welcome back, %name%!<br>Your friends, the %faction% are with you.";
+    public String FACTION_CHAT_PREFIX = "_";
 }

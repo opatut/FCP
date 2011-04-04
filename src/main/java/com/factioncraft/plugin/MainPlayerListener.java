@@ -3,7 +3,7 @@ package com.factioncraft.plugin;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
@@ -28,7 +28,8 @@ public class MainPlayerListener extends PlayerListener {
 		super.onPlayerRespawn(event);
 	}
 	
-	public void onPlayerJoin(PlayerEvent event) {
+	@Override	
+	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		
 		Faction faction = mPlugin.GetFactionManager().GetPlayerFaction(player);
@@ -45,8 +46,15 @@ public class MainPlayerListener extends PlayerListener {
 			player.sendMessage(c + "====================================================");
 		} else {
 			faction.OnPlayerJoin(player);
-			player.sendMessage(c + "Welcome back, " + player.getName() + "!");
-			player.sendMessage("Your friends, the " + faction.GetChatColor() + faction.GetName() + c + " are with you.");
+			String msg = new String(mPlugin.WELCOME_MESSAGE);
+			msg = msg.replaceAll("\\%name\\%", player.getName());
+			msg = msg.replaceAll("\\%faction\\%", faction.GetChatColor() + faction.GetName() + c);
+			String[] split = msg.split("\\<br\\>");
+			for(String s: split) {
+				player.sendMessage(c + s);
+			}
+			event.setJoinMessage(ChatColor.YELLOW + player.getName() + faction.GetChatColor() + 
+					" (" + faction.GetName() + ") " + ChatColor.YELLOW + "joined the game");
 		}
 	}
 	

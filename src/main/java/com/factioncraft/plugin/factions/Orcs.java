@@ -18,7 +18,7 @@ public class Orcs extends Faction {
 	public void OnEnable() {
 		PluginManager pm = mPlugin.getServer().getPluginManager();
 		OrcsEntityListener oel = new OrcsEntityListener(mPlugin);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGED, oel, Priority.Normal, mPlugin);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGE, oel, Priority.Normal, mPlugin);
 	}
 	
 	@Override
@@ -29,7 +29,13 @@ public class Orcs extends Faction {
 	public String GetName() {
 		return "Orcs";
 	}
-
+	
+	@Override
+	public String[] GetAliases() {
+		String[] r = {"Orcs", "Orc", "Orcman"};
+		return r;
+	}
+	
 	@Override
 	public ChatColor GetChatColor() {
 		return ChatColor.DARK_GREEN;

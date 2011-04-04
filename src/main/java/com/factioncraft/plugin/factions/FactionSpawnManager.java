@@ -78,14 +78,15 @@ public class FactionSpawnManager {
 		Location loc = GetSpawn(world, faction);
 		if(loc == null) 
 			return null;
-		for(int y = loc.getBlockY(); y < 127; ++y) {
-			if(world.getBlockAt(loc.getBlockX(), y, loc.getBlockZ()).getType() == Material.AIR &&
-					world.getBlockAt(loc.getBlockX(), y + 1, loc.getBlockZ()).getType() == Material.AIR) {
-				loc.setY(y);
+		Location l2 = new Location(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+		for(int y = l2.getBlockY(); y < 127; ++y) {
+			if(world.getBlockAt(l2.getBlockX(), y, l2.getBlockZ()).getType() == Material.AIR &&
+					world.getBlockAt(l2.getBlockX(), y + 1, l2.getBlockZ()).getType() == Material.AIR) {
+				l2.setY(y);
 				break;
 			}
 		}
-		return loc;
+		return l2;
 	}
 
 	public Location GetTeleportLocation(Player player) {
@@ -103,9 +104,9 @@ public class FactionSpawnManager {
 	public boolean Teleport(Player player, boolean to_default) {
 		Location loc = GetTeleportLocation(player);
 		if(loc != null)
-			player.teleportTo(loc);
+			player.teleport(loc);
 		else if(to_default)
-			player.teleportTo(player.getWorld().getSpawnLocation());
+			player.teleport(player.getWorld().getSpawnLocation());
 		else
 			return false;
 		return true;
@@ -114,9 +115,9 @@ public class FactionSpawnManager {
 	public boolean Teleport(Player player, Faction faction, boolean to_default) {
 		Location loc = GetTeleportLocation(player, faction);
 		if(loc != null)
-			player.teleportTo(loc);
+			player.teleport(loc);
 		else if(to_default)
-			player.teleportTo(player.getWorld().getSpawnLocation());
+			player.teleport(player.getWorld().getSpawnLocation());
 		else
 			return false;
 		return true;
